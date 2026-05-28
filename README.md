@@ -2,6 +2,8 @@
 
 > 一款帮助离职员工安全清理工作电脑上个人隐私数据的桌面工具。先扫描、后预览、再清理，防止误删。
 
+![界面截图](截图.png)
+
 ![Python](https://img.shields.io/badge/Python-3.8+-blue)
 ![Platform](https://img.shields.io/badge/Platform-Windows-green)
 ![License](https://img.shields.io/badge/License-MIT-yellow)
@@ -93,6 +95,8 @@ LeaveClean/
 # LeaveClean - Resignation Data Cleanup Assistant
 
 > A desktop tool to help employees securely clean personal data from work computers before leaving. Scan first, preview, then clean -- preventing accidental deletion.
+
+![Screenshot](截图.png)
 
 ## Features
 
