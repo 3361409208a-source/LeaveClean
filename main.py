@@ -773,6 +773,7 @@ class LeaveCleanApp:
             self.checked.pop(stable_key, None)
             is_warn = "⚠" in vals[1] or "★" in vals[1]
             self.tree.item(row, tags=("warn" if is_warn else "normal", tag_str))
+        self._update_button_states()
 
     def _toggle_select_all(self):
         checked = self.select_all_var.get()
@@ -782,33 +783,52 @@ class LeaveCleanApp:
             self.tree.item(cat_row, values=vals)
             for child in self.tree.get_children(cat_row):
                 self._set_item_checked(child, checked)
+        self._update_button_states()
+
+    def _update_button_states(self):
+        # 1. 检查是否有鼠标高亮行
+        sel = self.tree.selection()
+        has_sel = len(sel) > 0
+        sel_is_uninstall = False
+        if has_sel:
+            tags = self.tree.item(sel[0], "tags")
+            tag = tags[1] if len(tags) > 1 else ""
+            if tag.startswith("item:"):
+                parts = tag.split(":", 2)
+                path = parts[2]
+                sel_is_uninstall = path.startswith("uninstall:")
+
+        # 2. 检查是否有勾选项
+        has_checked = len(self.checked) > 0
+        has_checked_uninstall = any(v["path"].startswith("uninstall:") for v in self.checked.values())
+
+        # 3. 设置按钮状态
+        clean_state = tk.NORMAL if (has_checked or has_sel) else tk.DISABLED
+        self.btn_clean_sel.config(state=clean_state)
+
+        uninstall_state = tk.NORMAL if (has_checked_uninstall or sel_is_uninstall) else tk.DISABLED
+        self.btn_uninstall.config(state=uninstall_state)
+
+        open_state = tk.NORMAL if has_sel else tk.DISABLED
+        self.btn_open.config(state=open_state)
 
     # ================================================================
     #  树选中 → 预览 + 按钮状态
     # ================================================================
 
     def _on_tree_select(self, event):
+        self._update_button_states()
         sel = self.tree.selection()
         if not sel:
-            self.btn_clean_sel.config(state=tk.DISABLED)
-            self.btn_uninstall.config(state=tk.DISABLED)
-            self.btn_open.config(state=tk.DISABLED)
             return
         tags = self.tree.item(sel[0], "tags")
         tag = tags[1] if len(tags) > 1 else ""
         is_item = tag.startswith("item:")
-        self.btn_clean_sel.config(state=tk.NORMAL if is_item else tk.DISABLED)
-        self.btn_open.config(state=tk.NORMAL if is_item else tk.DISABLED)
         if is_item:
             parts = tag.split(":", 2)
             path = parts[2]
-            self.btn_uninstall.config(
-                state=tk.NORMAL if path.startswith("uninstall:") else tk.DISABLED
-            )
             vals = self.tree.item(sel[0], "values")
             self._show_preview(parts[1], path, vals)
-        else:
-            self.btn_uninstall.config(state=tk.DISABLED)
 
     def _ctx_preview(self):
         sel = self.tree.selection()
@@ -981,21 +1001,80 @@ class LeaveCleanApp:
         return parts[1], parts[2], vals[1]
 
     def _on_single_clean(self):
-        it = self._get_sel_item()
-        if not it:
-            messagebox.showwarning("提示", "请先选择一项")
+        # 1. 优先获取所有已勾选的项
+        to_clean = []
+        for stable_key, info in self.checked.items():
+            to_clean.append(info)
+
+        # 2. 如果没有勾选项，则获取当前鼠标高亮选中的单项
+        if not to_clean:
+            it = self._get_sel_item()
+            if it:
+                to_clean.append({"cat": it[0], "path": it[1], "desc": it[2]})
+
+        if not to_clean:
+            messagebox.showwarning("提示", "请先勾选(☑)或选择需要清理的项目")
             return
-        cat, path, desc = it
-        act = "卸载" if path.startswith("uninstall:") else "清除"
-        self._do_single(cat, path, desc, act)
+
+        # 3. 如果勾选了多项，就相当于调用一键清理
+        if len(to_clean) > 1:
+            self._on_clean()
+            return
+
+        # 4. 如果只有 1 项，使用原来的单项处理逻辑
+        item = to_clean[0]
+        act = "卸载" if item["path"].startswith("uninstall:") else "清除"
+        self._do_single(item["cat"], item["path"], item["desc"], act)
 
     def _on_single_uninstall(self):
-        it = self._get_sel_item()
-        if not it:
+        # 1. 优先获取所有已勾选的卸载项
+        to_uninstall = []
+        for stable_key, info in self.checked.items():
+            if info["path"].startswith("uninstall:"):
+                to_uninstall.append(info)
+
+        # 2. 如果没有勾选项，则获取当前鼠标高亮选中的单项
+        if not to_uninstall:
+            it = self._get_sel_item()
+            if it and it[1].startswith("uninstall:"):
+                to_uninstall.append({"cat": it[0], "path": it[1], "desc": it[2]})
+
+        if not to_uninstall:
+            messagebox.showwarning("提示", "请先勾选(☑)或选择需要卸载的软件")
             return
-        cat, path, desc = it
-        if path.startswith("uninstall:"):
-            self._do_single(cat, path, desc, "卸载")
+
+        # 3. 弹窗确认
+        names = "\n".join(f"  • {item['desc']}" for item in to_uninstall)
+        if not messagebox.askyesno(
+            "确认批量卸载",
+            f"确定卸载以下 {len(to_uninstall)} 个软件吗？\n\n{names}\n\n不可撤销！",
+            icon="warning"
+        ):
+            return
+
+        # 4. 执行批量卸载
+        self._log(f"开始批量卸载 {len(to_uninstall)} 个软件...", "warning")
+
+        def go():
+            t0 = time.time()
+            done = 0
+            for item in to_uninstall:
+                cl = self.cleaners[item["cat"]]
+                self.root.after(0, self._log, f"正在卸载: {item['desc']}...", "info")
+                n = cl.clean([item["path"]], self.logger)
+                done += n
+                for r in self.logger.get_records():
+                    tg = "success" if "成功" in r else ("error" if "错误" in r else "info")
+                    self.root.after(0, self._log, r, tg)
+                self.logger.records.clear()
+            el = time.time() - t0
+            self.root.after(0, self._log, f"批量卸载完成，成功卸载 {done}/{len(to_uninstall)} 个软件 ({el:.2f}s)", "success")
+            if done > 0:
+                self.root.after(0, self._inc_cleaned, done)
+            self.root.after(0, self.status_label.config, {"text": f"批量卸载完成 ({el:.2f}s)"})
+            self.root.after(0, self._update_button_states)
+
+        threading.Thread(target=go, daemon=True).start()
 
     def _on_open_path(self):
         it = self._get_sel_item()
