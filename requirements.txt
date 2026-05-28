@@ -1,3 +1,1 @@
-# 离职数据清理助手
-# 本项目仅使用 Python 标准库，无需额外安装依赖
-# 运行: python main.py
+pywebview>=5.1
