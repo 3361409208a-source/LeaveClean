@@ -21,6 +21,7 @@ from cleaners.software import SoftwareCleaner
 from cleaners.aitools import AIToolsCleaner
 from cleaners.devenv import DevEnvCleaner
 from cleaners.selfclean import SelfCleaner
+from cleaners.uninstall import UninstallCleaner
 from utils.logger import CleanLogger
 
 
@@ -30,6 +31,7 @@ class LeaveCleanApp:
     HEIGHT = 750
 
     CATEGORIES = {
+        "uninstall": ("软件卸载", "#d32f2f"),
         "browser": ("浏览器数据", "#4285f4"),
         "chat": ("聊天与通讯", "#34a853"),
         "files": ("个人文件", "#ea4335"),
@@ -50,6 +52,7 @@ class LeaveCleanApp:
         self.cleaners = {
             k: cls()
             for k, cls in [
+                ("uninstall", UninstallCleaner),
                 ("browser", BrowserCleaner),
                 ("chat", ChatCleaner),
                 ("files", FileCleaner),
@@ -118,7 +121,7 @@ class LeaveCleanApp:
             ("size", "大小", "0 B", "#ea4335"),
             ("cleaned", "已清理", "0", "#34a853"),
             ("scan_time", "用时", "0.0s", "#ff6d01"),
-            ("modules", "模块", "0/7", "#9c27b0"),
+            ("modules", "模块", "0/9", "#9c27b0"),
         ]:
             c = tk.Frame(bar, bg="white", relief=tk.RIDGE, bd=1, padx=8, pady=2)
             c.pack(side=tk.LEFT, fill=tk.X, expand=True, padx=2)
@@ -489,7 +492,7 @@ class LeaveCleanApp:
         for k in ("total", "size"):
             self.stat_cards[k].config(text="...")
         self.stat_cards["cleaned"].config(text="0")
-        self.stat_cards["modules"].config(text="0/7")
+        self.stat_cards["modules"].config(text=f"0/{len(self.cleaners)}")
         for i in self.tree.get_children():
             self.tree.delete(i)
         self.checked.clear()
