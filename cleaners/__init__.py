@@ -5,3 +5,4 @@ from .credentials import CredentialCleaner
 from .software import SoftwareCleaner
 from .aitools import AIToolsCleaner
 from .devenv import DevEnvCleaner
+from .selfclean import SelfCleaner

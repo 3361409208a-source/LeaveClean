@@ -20,6 +20,7 @@ from cleaners.credentials import CredentialCleaner
 from cleaners.software import SoftwareCleaner
 from cleaners.aitools import AIToolsCleaner
 from cleaners.devenv import DevEnvCleaner
+from cleaners.selfclean import SelfCleaner
 from utils.logger import CleanLogger
 
 
@@ -36,6 +37,7 @@ class LeaveCleanApp:
         "aitools": ("AI编程工具", "#00bcd4"),
         "devenv": ("开发环境", "#795548"),
         "software": ("个人软件管理", "#9c27b0"),
+        "selfclean": ("本应用自身", "#e91e63"),
     }
 
     def __init__(self):
@@ -55,6 +57,7 @@ class LeaveCleanApp:
                 ("aitools", AIToolsCleaner),
                 ("devenv", DevEnvCleaner),
                 ("software", SoftwareCleaner),
+                ("selfclean", SelfCleaner),
             ]
         }
         self.logger = CleanLogger()
@@ -627,13 +630,15 @@ class LeaveCleanApp:
                     status, optype = "可卸载", "卸载"
                 elif path.startswith("regclean:"):
                     status, optype = "残留", "注册表"
+                elif path.startswith("selfdestruct:"):
+                    status, optype = "可卸载", "自卸载"
                 elif path.startswith("data:"):
                     status, optype = "存在", "清除"
                 else:
                     status, optype = "存在", "清除"
 
                 dp = path
-                for pf in ("uninstall:", "data:", "regclean:"):
+                for pf in ("selfdestruct:", "uninstall:", "data:", "regclean:"):
                     if dp.startswith(pf):
                         dp = dp[len(pf) :]
                         break
@@ -1046,6 +1051,8 @@ class LeaveCleanApp:
             self.root.after(
                 0, self.status_label.config, {"text": f"{action}完成 ({el:.2f}s)"}
             )
+            if getattr(cl, "self_destruct_triggered", False):
+                self.root.after(500, self._trigger_self_destruct)
 
         threading.Thread(target=go, daemon=True).start()
 
@@ -1134,6 +1141,9 @@ class LeaveCleanApp:
                 f"[{cl.DISPLAY_NAME}] 完成 ({time.time() - t0:.2f}s)",
                 "success",
             )
+            if getattr(cl, "self_destruct_triggered", False):
+                self.root.after(0, self._trigger_self_destruct)
+                return
         self.root.after(0, self._batch_done, cleaned, total)
 
     def _batch_progress(self, pct, done, total, cleaned):
@@ -1152,6 +1162,20 @@ class LeaveCleanApp:
         messagebox.showinfo(
             "完成", f"清理完成！\n成功: {cleaned}/{total}\n\n建议重新扫描确认"
         )
+
+    def _trigger_self_destruct(self):
+        import subprocess
+        import tempfile
+
+        app_dir = os.path.dirname(os.path.abspath(__file__))
+        batch_path = os.path.join(tempfile.gettempdir(), "leaveclean_selfdestruct.bat")
+        subprocess.Popen(
+            ["cmd.exe", "/c", batch_path],
+            shell=False,
+            creationflags=subprocess.CREATE_NO_WINDOW | subprocess.DETACHED_PROCESS,
+            close_fds=True,
+        )
+        self.root.after(1000, self.root.destroy)
 
     # ================================================================
     #  日志
