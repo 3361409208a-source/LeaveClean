@@ -3,7 +3,7 @@ import os
 import shutil
 import ctypes
 import subprocess
-from utils.scanner import check_path_exists, get_dir_size, format_size, scan_directory
+from utils.scanner import check_path_exists, get_dir_size_fast, format_size, scan_directory
 
 
 class FileCleaner:
@@ -27,7 +27,7 @@ class FileCleaner:
         # 用户目录
         for name, path in self.dirs.items():
             if check_path_exists(path):
-                size = format_size(get_dir_size(path))
+                size = format_size(get_dir_size_fast(path))
                 items = scan_directory(path)
                 results.append((f"{name} ({len(items)}项)", path, size, True))
             else:
@@ -35,12 +35,12 @@ class FileCleaner:
 
         # 临时文件
         if check_path_exists(self.temp_dir):
-            size = format_size(get_dir_size(self.temp_dir))
+            size = format_size(get_dir_size_fast(self.temp_dir))
             results.append(("临时文件 (%TEMP%)", self.temp_dir, size, True))
 
         # 最近文件记录
         if check_path_exists(self.recent_dir):
-            size = format_size(get_dir_size(self.recent_dir))
+            size = format_size(get_dir_size_fast(self.recent_dir))
             results.append(("最近文件记录", self.recent_dir, size, True))
 
         # 回收站
