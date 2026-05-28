@@ -24,14 +24,43 @@ class FileCleaner:
 
     def scan(self) -> list:
         results = []
-        # 用户目录
+        
+        # 1. 敏感文档关键字 (简历、offer、劳动合同、交接、工作总结、密码等)
+        sensitive_keywords = ["简历", "resume", "job", "offer", "合同", "contract", "交接", "工作总结", "汇报", "报告", "password", "密码", "账号", "总结"]
+        sensitive_files = []
+        
+        # 2. 大体积安装包与压缩包 (> 20MB)
+        large_files = []
+        
         for name, path in self.dirs.items():
-            if check_path_exists(path):
-                size = format_size(get_dir_size_fast(path))
-                items = scan_directory(path)
-                results.append((f"{name} ({len(items)}项)", path, size, True))
-            else:
+            if not check_path_exists(path):
                 results.append((name, path, "0 B", False))
+                continue
+            
+            # 扫描目录下的一级和二级文件
+            try:
+                for entry in os.scandir(path):
+                    if entry.is_file(follow_symlinks=False):
+                        self._classify_file(entry.path, entry.name, name, sensitive_keywords, sensitive_files, large_files)
+                    elif entry.is_dir(follow_symlinks=False):
+                        # 扫描二级文件
+                        try:
+                            for sub_entry in os.scandir(entry.path):
+                                if sub_entry.is_file(follow_symlinks=False):
+                                    self._classify_file(sub_entry.path, sub_entry.name, f"{name}/{entry.name}", sensitive_keywords, sensitive_files, large_files)
+                        except Exception:
+                            pass
+            except Exception:
+                pass
+
+            # 常规目录只列出作为手动核对项，默认不执行自动清空，防误杀
+            size = format_size(get_dir_size_fast(path))
+            items = scan_directory(path)
+            results.append((f"[手动审核] 建议手动核对 {name} 目录 ({len(items)}项)", f"manual_review:{path}", size, True))
+
+        # 将敏感文件和大文件添加到结果中
+        results.extend(sensitive_files)
+        results.extend(large_files)
 
         # 临时文件
         if check_path_exists(self.temp_dir):
@@ -48,11 +77,46 @@ class FileCleaner:
 
         return results
 
+    def _classify_file(self, fp, name, cat_name, sensitive_keywords, sensitive_files, large_files):
+        fl = name.lower()
+        # 检查敏感词
+        if any(kw in fl for kw in sensitive_keywords):
+            try:
+                sz = format_size(os.path.getsize(fp))
+            except OSError:
+                sz = "未知"
+            sensitive_files.append((f"[敏感文件] {cat_name} - ⚠ {name}", f"data:{fp}", sz, True))
+            return
+            
+        # 检查大体积安装包/压缩包
+        ext = os.path.splitext(fl)[1]
+        if ext in (".exe", ".msi", ".zip", ".rar", ".7z", ".tar.gz", ".dmg"):
+            try:
+                fsize = os.path.getsize(fp)
+                if fsize > 20 * 1024 * 1024:  # > 20MB
+                    large_files.append((f"[大安装包/压缩包] {cat_name} - {name}", f"data:{fp}", format_size(fsize), True))
+            except OSError:
+                pass
+
     def clean(self, paths: list, logger) -> int:
         cleaned = 0
         for path in paths:
             try:
-                if path == "$RECYCLE":
+                if path.startswith("manual_review:"):
+                    real_path = path[14:]
+                    logger.warning(f"【安全提醒】为防误杀，{os.path.basename(real_path)} 目录请手动备份与清理：{real_path}")
+                    cleaned += 1
+                elif path.startswith("data:"):
+                    real_path = path[5:]
+                    if os.path.isfile(real_path):
+                        os.remove(real_path)
+                        logger.success(f"已删除敏感文件: {real_path}")
+                        cleaned += 1
+                    elif os.path.isdir(real_path):
+                        shutil.rmtree(real_path, ignore_errors=True)
+                        logger.success(f"已删除目录: {real_path}")
+                        cleaned += 1
+                elif path == "$RECYCLE":
                     self._empty_recycle_bin(logger)
                     cleaned += 1
                 elif path == self.temp_dir:
@@ -62,7 +126,7 @@ class FileCleaner:
                     self._clean_recent(logger)
                     cleaned += 1
                 elif os.path.isdir(path):
-                    # 清理目录内容，但保留目录本身
+                    # 兼容可能存在的旧格式（如果没有前缀的目录）
                     for item in os.listdir(path):
                         item_path = os.path.join(path, item)
                         try:

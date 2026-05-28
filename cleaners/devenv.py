@@ -2,6 +2,7 @@
 import os
 import shutil
 import subprocess
+import winreg
 from utils.scanner import check_path_exists, get_dir_size_fast, format_size, count_files_fast
 
 
@@ -228,6 +229,12 @@ class DevEnvCleaner:
                     (os.path.join(local, "Temp"), "Windows临时文件"),
                 ],
             },
+            "Outlook 邮件": {
+                "paths": [
+                    (os.path.join(local, r"Microsoft\Outlook"), "Outlook邮件本地缓存 (.ost)"),
+                    (os.path.join(roaming, r"Microsoft\Outlook"), "Outlook个人签名与配置文件"),
+                ],
+            },
         }
 
     def scan(self) -> list:
@@ -251,6 +258,43 @@ class DevEnvCleaner:
                         desc = "⚠ " + desc
 
                     results.append((desc, path, size, True))
+
+        # 动态扫描 OneDrive 路径
+        onedrive_paths = []
+        try:
+            key = winreg.OpenKey(winreg.HKEY_CURRENT_USER, r"Software\Microsoft\Windows\CurrentVersion\Explorer\Shell Folders", 0, winreg.KEY_READ)
+            od_dir, _ = winreg.QueryValueEx(key, "OneDrive")
+            winreg.CloseKey(key)
+            if od_dir and check_path_exists(od_dir):
+                onedrive_paths.append((od_dir, "OneDrive 本地同步目录(商业/个人数据)"))
+        except Exception:
+            pass
+        try:
+            key = winreg.OpenKey(winreg.HKEY_CURRENT_USER, r"Software\Microsoft\OneDrive", 0, winreg.KEY_READ)
+            od_dir, _ = winreg.QueryValueEx(key, "UserFolder")
+            winreg.CloseKey(key)
+            if od_dir and check_path_exists(od_dir) and od_dir not in [p[0] for p in onedrive_paths]:
+                onedrive_paths.append((od_dir, "OneDrive 本地同步目录"))
+        except Exception:
+            pass
+            
+        od_cache = os.path.join(local, "Microsoft", "OneDrive")
+        if check_path_exists(od_cache):
+            onedrive_paths.append((od_cache, "OneDrive 应用缓存与元数据"))
+            
+        for path, detail in onedrive_paths:
+            size = format_size(get_dir_size_fast(path))
+            fcount = count_files_fast(path)
+            results.append((f"OneDrive - {detail} (~{fcount}文件)", path, size, True))
+
+        # 扫描本地 Git 代码仓库
+        git_repos = self._scan_git_repos()
+        for name, repo_path, remote_url in git_repos:
+            size = format_size(get_dir_size_fast(repo_path))
+            fcount = count_files_fast(repo_path)
+            desc = f"本地项目代码仓库 - ⚠ {name} ({remote_url}) (~{fcount}文件)"
+            results.append((desc, repo_path, size, True))
+
         return results
 
     def clean(self, paths: list, logger) -> int:
@@ -275,3 +319,80 @@ class DevEnvCleaner:
             except Exception as e:
                 logger.error(f"删除失败 {path}: {e}")
         return cleaned
+
+    def _scan_git_repos(self) -> list:
+        repos = []
+        home = os.path.expanduser("~")
+        
+        candidates = [
+            os.path.join(home, "Desktop"),
+            os.path.join(home, "Documents"),
+            os.path.join(home, "Downloads"),
+            os.path.join(home, "source", "repos"),
+            os.path.join(home, "workspace"),
+            os.path.join(home, "projects"),
+            os.path.join(home, "code"),
+        ]
+        for drive in ["C:\\", "D:\\", "E:\\", "F:\\"]:
+            if os.path.exists(drive):
+                candidates.extend([
+                    os.path.join(drive, "workspace"),
+                    os.path.join(drive, "projects"),
+                    os.path.join(drive, "code"),
+                    os.path.join(drive, "git"),
+                    os.path.join(drive, "github"),
+                    os.path.join(drive, "gitlab"),
+                ])
+                
+        search_dirs = []
+        seen = set()
+        for d in candidates:
+            d_norm = os.path.normpath(d).lower()
+            if d_norm not in seen and os.path.isdir(d):
+                seen.add(d_norm)
+                search_dirs.append(d)
+                
+        for base in search_dirs:
+            try:
+                for entry in os.scandir(base):
+                    if not entry.is_dir(follow_symlinks=False):
+                        continue
+                    git_dir = os.path.join(entry.path, ".git")
+                    if os.path.isdir(git_dir):
+                        url = self._get_git_remote(entry.path)
+                        repos.append((entry.name, entry.path, url))
+                        continue
+                    
+                    try:
+                        for sub_entry in os.scandir(entry.path):
+                            if sub_entry.is_dir(follow_symlinks=False):
+                                sub_git = os.path.join(sub_entry.path, ".git")
+                                if os.path.isdir(sub_git):
+                                    url = self._get_git_remote(sub_entry.path)
+                                    repos.append((f"{entry.name}/{sub_entry.name}", sub_entry.path, url))
+                    except Exception:
+                        pass
+            except Exception:
+                pass
+        return repos
+
+    def _get_git_remote(self, repo_path: str) -> str:
+        config_path = os.path.join(repo_path, ".git", "config")
+        if not os.path.isfile(config_path):
+            return "Local Repository"
+        try:
+            url = ""
+            with open(config_path, "r", encoding="utf-8", errors="ignore") as f:
+                in_remote = False
+                for line in f:
+                    line = line.strip()
+                    if line.startswith('[remote "origin"]'):
+                        in_remote = True
+                    elif line.startswith("[") and not line.startswith('[remote'):
+                        in_remote = False
+                    elif in_remote and line.startswith("url ="):
+                        url = line.split("=", 1)[1].strip()
+                        break
+            return url if url else "Local Repository"
+        except Exception:
+            return "Local Repository"

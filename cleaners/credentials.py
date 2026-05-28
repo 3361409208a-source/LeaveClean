@@ -2,6 +2,7 @@
 import os
 import subprocess
 import ctypes
+import winreg
 from utils.scanner import check_path_exists, get_dir_size_fast, format_size
 
 
@@ -114,6 +115,33 @@ class CredentialCleaner:
                         size = "未知"
                 results.append((name, path, size, True))
 
+        # 8. 敏感环境变量扫描
+        sensitive_keywords = ["key", "secret", "token", "password", "credential", "access_key", "auth", "jwt", "api_"]
+        
+        # 用户环境变量
+        try:
+            key = winreg.OpenKey(winreg.HKEY_CURRENT_USER, "Environment", 0, winreg.KEY_READ)
+            info = winreg.QueryInfoKey(key)
+            for i in range(info[1]):
+                name, value, val_type = winreg.EnumValue(key, i)
+                if any(kw in name.lower() for kw in sensitive_keywords):
+                    results.append((f"用户环境变量 - ⚠ {name}", f"env:HKCU:{name}", "环境变量", True))
+            winreg.CloseKey(key)
+        except Exception:
+            pass
+
+        # 系统环境变量
+        try:
+            key = winreg.OpenKey(winreg.HKEY_LOCAL_MACHINE, r"SYSTEM\CurrentControlSet\Control\Session Manager\Environment", 0, winreg.KEY_READ)
+            info = winreg.QueryInfoKey(key)
+            for i in range(info[1]):
+                name, value, val_type = winreg.EnumValue(key, i)
+                if any(kw in name.lower() for kw in sensitive_keywords):
+                    results.append((f"系统环境变量 - ⚠ {name}", f"env:HKLM:{name}", "环境变量", True))
+            winreg.CloseKey(key)
+        except Exception:
+            pass
+
         return results
 
     def clean(self, paths: list, logger) -> int:
@@ -160,9 +188,41 @@ class CredentialCleaner:
                     # 文件或目录路径
                     self._clean_path(item, logger)
                     cleaned += 1
+                elif item.startswith("env:"):
+                    cleaned += self._clean_env_var(item, logger)
             except Exception as e:
                 logger.error(f"清理失败 {item}: {e}")
         return cleaned
+
+    def _clean_env_var(self, item: str, logger) -> int:
+        try:
+            parts = item.split(":", 2)
+            hive_name = parts[1]
+            var_name = parts[2]
+            
+            hive = winreg.HKEY_CURRENT_USER if hive_name == "HKCU" else winreg.HKEY_LOCAL_MACHINE
+            reg_path = "Environment" if hive_name == "HKCU" else r"SYSTEM\CurrentControlSet\Control\Session Manager\Environment"
+            
+            key = winreg.OpenKey(hive, reg_path, 0, winreg.KEY_SET_VALUE)
+            winreg.DeleteValue(key, var_name)
+            winreg.CloseKey(key)
+            
+            logger.success(f"已删除环境变量: [{hive_name}] {var_name}")
+            
+            # 广播环境变动消息
+            try:
+                HWND_BROADCAST = 0xFFFF
+                WM_SETTINGCHANGE = 0x001A
+                ctypes.windll.user32.SendMessageTimeoutW(
+                    HWND_BROADCAST, WM_SETTINGCHANGE, 0, "Environment", 
+                    0x0002, 1000, ctypes.byref(ctypes.c_ulong())
+                )
+            except Exception:
+                pass
+            return 1
+        except Exception as e:
+            logger.error(f"删除环境变量 {item} 失败: {e}")
+            return 0
 
     # ==================== Windows 凭据 ====================
 
