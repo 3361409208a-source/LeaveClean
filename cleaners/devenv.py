@@ -239,6 +239,7 @@ class DevEnvCleaner:
 
     def scan(self) -> list:
         results = []
+        local = os.environ.get("LOCALAPPDATA", "")
         for env_name, info in self.environments.items():
             for path, detail in info["paths"]:
                 if check_path_exists(path):
