@@ -19,6 +19,7 @@ from cleaners.software import SoftwareCleaner
 from cleaners.aitools import AIToolsCleaner
 from cleaners.devenv import DevEnvCleaner
 from cleaners.selfclean import SelfCleaner
+from cleaners.uninstall import UninstallCleaner
 from utils.logger import CleanLogger
 from utils.scanner import format_size
 
@@ -27,6 +28,7 @@ class PyAPI:
     def __init__(self):
         self._logger = CleanLogger()
         self._cleaners = {
+            "uninstall": UninstallCleaner(),
             "browser": BrowserCleaner(),
             "chat": ChatCleaner(),
             "files": FileCleaner(),

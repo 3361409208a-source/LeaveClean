@@ -309,6 +309,7 @@ const updateClock = () => {
 // 分类目录列表
 const categories = ref({
   all: { name: '全部', icon: 'Memo', count: 0 },
+  uninstall: { name: '软件卸载', icon: 'Delete', count: 0 },
   browser: { name: '浏览器数据', icon: 'ChromeFilled', count: 0 },
   chat: { name: '聊天与通讯', icon: 'ChatLineRound', count: 0 },
   credentials: { name: '凭据与隐私', icon: 'Lock', count: 0 },
@@ -325,7 +326,7 @@ const stats = ref({
   size: '0 B',
   cleaned: '0',
   scanTime: '0.0s',
-  modules: '0/8'
+  modules: '0/9'
 })
 
 const statCards = computed(() => [
@@ -451,7 +452,7 @@ const startScan = async () => {
   stats.value.total = '0'
   stats.value.size = '0 B'
   stats.value.scanTime = '0.0s'
-  stats.value.modules = '0/8'
+  stats.value.modules = '0/9'
   
   addLog('info', '开始全系统扫描数据痕迹...')
   
@@ -472,7 +473,7 @@ const startScan = async () => {
     // 处理扫描结果，把 list 装载到 items.ref
     const processed = []
     let totalSize = 0
-    const catCounts = { all: 0, browser: 0, chat: 0, credentials: 0, devenv: 0, aitools: 0, software: 0, files: 0, selfclean: 0 }
+    const catCounts = { all: 0, uninstall: 0, browser: 0, chat: 0, credentials: 0, devenv: 0, aitools: 0, software: 0, files: 0, selfclean: 0 }
     
     // 初始化模块数
     let loadedModules = 0
@@ -541,7 +542,7 @@ const startScan = async () => {
     items.value = processed
     stats.value.total = String(processed.length)
     stats.value.size = formatSize(totalSize)
-    stats.value.modules = `${loadedModules}/8`
+    stats.value.modules = `${loadedModules}/9`
     
     // 更新分类计数
     for (const key in categories.value) {
