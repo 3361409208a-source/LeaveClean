@@ -10,22 +10,24 @@
 
 ## 功能概览
 
-### 7 大清理模块
+### 9 大清理模块
 
 | 模块 | 清理内容 |
 |------|---------|
+| **软件卸载** | 一键安全卸载 50+ 常见个人软件，支持静默卸载、深度扫描残留数据 |
 | **浏览器数据** | Chrome / Edge / Firefox / QQ浏览器 / 搜狗 / 360 — 账号同步、Cookie、密码、历史、缓存、扩展、书签等 |
 | **聊天与通讯** | 微信(新版+经典版) / QQ(NT版) / 企业微信 / 钉钉 / 飞书 / 腾讯会议 / Telegram / Foxmail — 图片、视频、文件、语音、聊天记录分类展示 |
 | **个人文件** | 桌面 / 下载 / 文档 / 图片 / 视频 / 音乐 / 回收站 / 临时文件 / 最近文件记录 |
 | **凭据与隐私** | Windows凭据 / WiFi密码 / 剪贴板 / 搜索历史 / 运行历史 / 远程桌面记录 / DNS缓存 / Git / SSH密钥 / Shell历史 |
 | **AI 编程工具** | Claude Code / Cursor / Windsurf / Trae / Kiro / Copilot / Codeium / OpenClaw / Codex / Gemini CLI / Cline / Ollama 等 30+ 工具 |
 | **开发环境** | Python / Node.js(NVM/PNPM/Bun) / Go / Rust / Java / .NET / Docker / Flutter / HarmonyOS / VS Code / JetBrains / AWS / Azure / K8s |
-| **个人软件管理** | 50+ 常见个人软件 — 卸载软件 + 清除数据残留 + 注册表清理 + 快捷方式清理 |
+| **个人软件管理** | 50+ 常见个人软件数据残留 — 清除注册表残留、配置缓存及快捷方式 |
+| **本应用自身** | 自动生成的扫描缓存、运行日志及使用痕迹自毁，真正实现无痕清理 |
 
 ### 界面特性
 
 - **统一树形视图** — 勾选、详情、路径、大小、操作类型在同一个表格中展示
-- **分类侧边栏** — 左侧 7 大分类导航，点击过滤，切换时保留勾选状态
+- **分类侧边栏** — 左侧 9 大分类导航，点击过滤，切换时保留勾选状态
 - **数据详情预览** — 点击任一行，实时预览文件内容 / 目录结构（敏感信息自动打码）
 - **单项 + 批量操作** — 每行可独立清除/卸载，也可勾选后一键批量清理
 - **右键菜单** — 查看详情 / 打开目录 / 复制路径 / 清除 / 卸载
@@ -62,16 +64,20 @@ python main.py
 LeaveClean/
 ├── main.py                # GUI 主界面 (tkinter)
 ├── cleaners/
+│   ├── uninstall.py       # 软件一键卸载
 │   ├── browser.py         # 浏览器数据清理
 │   ├── chat.py            # 聊天通讯清理
 │   ├── files.py           # 个人文件清理
 │   ├── credentials.py     # 凭据隐私清理
 │   ├── aitools.py         # AI 编程工具清理
 │   ├── devenv.py          # 开发环境清理
-│   └── software.py        # 个人软件管理
+│   ├── software.py        # 个人软件残留管理
+│   └── selfclean.py       # 本应用自身自毁清理
 ├── utils/
 │   ├── scanner.py         # 文件扫描与大小统计
 │   └── logger.py          # 操作日志记录
+├── landing/               # 静态 Landing Page 官网 (Windows XP 风格)
+├── vercel.json            # Vercel 静态官网部署配置文件
 └── logs/                  # 自动生成的日志目录
 ```
 
@@ -90,6 +96,26 @@ LeaveClean/
 - 卸载软件时可能弹出卸载向导，请配合完成
 - **数据删除后无法恢复**，请确认后再操作
 
+## 打包为可执行文件 (.exe)
+
+本项目仅使用 Python 标准库，可使用 PyInstaller 轻松打包成无需依赖的单文件 `.exe`。
+
+1. **安装 PyInstaller**：
+   ```bash
+   pip install pyinstaller
+   ```
+2. **执行打包**：
+   ```bash
+   pyinstaller --onefile --noconsole --name "LeaveClean" main.py
+   ```
+3. 打包完成后，可在生成的 `dist/` 目录中找到 `LeaveClean.exe`。
+
+## 静态官网部署 (Landing Page)
+
+项目 `landing/` 目录下内置了 Windows XP 经典 Luna 风格的中英双语介绍主页。
+- 根目录已包含 `vercel.json` 配置文件。
+- 可直接导入 GitHub 仓库一键部署至 Vercel 平台，或将其作为静态页面直接托管。
+
 ---
 
 # LeaveClean - Resignation Data Cleanup Assistant
@@ -100,22 +126,24 @@ LeaveClean/
 
 ## Features
 
-### 7 Cleanup Modules
+### 9 Cleanup Modules
 
 | Module | What it cleans |
 |--------|---------------|
+| **Software Uninstall** | Safe & clean uninstallation of 50+ common personal apps, scanning deep registry/cache residues |
 | **Browser Data** | Chrome / Edge / Firefox / QQ Browser / Sogou / 360 -- accounts, sync data, cookies, passwords, history, cache, extensions, bookmarks |
 | **Chat & Communication** | WeChat (new + classic) / QQ (NT) / WeCom / DingTalk / Feishu / Tencent Meeting / Telegram / Foxmail -- images, videos, files, voice messages, chat history |
 | **Personal Files** | Desktop / Downloads / Documents / Pictures / Videos / Music / Recycle Bin / Temp files / Recent files |
 | **Credentials & Privacy** | Windows Credentials / WiFi passwords / Clipboard / Search history / Run history / RDP history / DNS cache / Git / SSH keys / Shell history |
 | **AI Coding Tools** | Claude Code / Cursor / Windsurf / Trae / Kiro / Copilot / Codeium / OpenClaw / Codex / Gemini CLI / Cline / Ollama and 30+ more |
 | **Dev Environments** | Python / Node.js (NVM/PNPM/Bun) / Go / Rust / Java / .NET / Docker / Flutter / HarmonyOS / VS Code / JetBrains / AWS / Azure / K8s |
-| **Software Management** | 50+ personal apps -- uninstall + remove data residuals + registry cleanup + shortcut cleanup |
+| **Software Residues** | Registry entries, config caches, and shortcut residue cleanup for 50+ apps |
+| **Self-Clean** | Self-destruction of scan cache, logger files, and app traces for trace-free execution |
 
 ### UI Features
 
 - **Unified tree view** -- checkbox, details, path, size, action type in one table
-- **Category sidebar** -- 7 categories for quick filtering, checked state preserved across switches
+- **Category sidebar** -- 9 categories for quick filtering, checked state preserved across switches
 - **Data preview** -- click any row to preview file content / directory structure (sensitive info auto-masked)
 - **Single + batch operations** -- clean/uninstall per item, or batch clean all checked items
 - **Context menu** -- right-click for details / open folder / copy path / clean / uninstall
@@ -152,16 +180,20 @@ python main.py
 LeaveClean/
 ├── main.py                # GUI entry (tkinter)
 ├── cleaners/
+│   ├── uninstall.py       # App uninstaller
 │   ├── browser.py         # Browser data cleanup
 │   ├── chat.py            # Chat app cleanup
 │   ├── files.py           # Personal files cleanup
 │   ├── credentials.py     # Credentials & privacy cleanup
 │   ├── aitools.py         # AI coding tools cleanup
 │   ├── devenv.py          # Dev environment cleanup
-│   └── software.py        # Software management
+│   ├── software.py        # Software residues cleanup
+│   └── selfclean.py       # Application self-clean/self-destruct
 ├── utils/
 │   ├── scanner.py         # File scanner & size calculator
 │   └── logger.py          # Operation logger
+├── landing/               # Static landing page (Windows XP style)
+├── vercel.json            # Vercel deployment config for static landing page
 └── logs/                  # Auto-generated log directory
 ```
 
@@ -172,6 +204,26 @@ LeaveClean/
 - **Sensitive info masked** -- passwords, tokens, keys shown as `********` in preview
 - **Operation log** -- every cleanup is logged to `logs/`
 - **Double confirmation** -- batch cleanup requires two confirmations
+
+## Package & Build (.exe)
+
+This project has zero third-party dependencies, meaning you can pack it into a single executable using PyInstaller.
+
+1. **Install PyInstaller**:
+   ```bash
+   pip install pyinstaller
+   ```
+2. **Build executable**:
+   ```bash
+   pyinstaller --onefile --noconsole --name "LeaveClean" main.py
+   ```
+3. Find your standalone executable in the `dist/` directory.
+
+## Landing Page Deployment
+
+The `landing/` folder contains a dual-language Windows XP Luna style introduction page.
+- Already configured with `vercel.json`.
+- Easily host it on Vercel by importing your GitHub repository.
 
 ## License
 

@@ -9,3 +9,14 @@ dist/
 frontend/node_modules/
 frontend/dist/
 
+# PyInstaller 打包产物与配置
+build/
+*.spec
+
+# IDE 与本地配置
+.claude/
+.gemini/
+.idea/
+.vscode/
+
+
