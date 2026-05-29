@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LeaveClean - 离职数据清理助手</title>
+  <meta name="description" content="离职数据清理助手 - 安全清理工作电脑上的个人隐私数据。9大模块，30+AI工具支持，零依赖。">
+  <meta property="og:title" content="LeaveClean - 离职数据清理助手">
+  <meta property="og:description" content="一键清理个人隐私数据，安全离职">
+  <meta property="og:type" content="website">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- Navbar -->
+  <nav class="navbar" id="navbar">
+    <div class="container">
+      <a href="#" class="navbar-logo">
+        <svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="nav-bg" x1="0%" y1="0%" x2="0%" y2="100%">
+              <stop offset="0%" style="stop-color:#3a93ff"/>
+              <stop offset="100%" style="stop-color:#0058e6"/>
+            </linearGradient>
+            <linearGradient id="nav-shield" x1="0%" y1="0%" x2="0%" y2="100%">
+              <stop offset="0%" style="stop-color:#6dd66d"/>
+              <stop offset="50%" style="stop-color:#44a843"/>
+              <stop offset="100%" style="stop-color:#2d8e2c"/>
+            </linearGradient>
+          </defs>
+          <rect x="1" y="1" width="30" height="30" rx="4" fill="url(#nav-bg)" stroke="#003399" stroke-width="1"/>
+          <rect x="2" y="2" width="28" height="14" rx="3" fill="rgba(255,255,255,0.2)"/>
+          <path d="M16 5 L9 8 L9 15 C9 20 16 25 16 25 C16 25 23 20 23 15 L23 8 Z" fill="url(#nav-shield)" stroke="#1a6b1a" stroke-width="0.8"/>
+          <polyline points="12.5,15 15,17.5 20,12.5" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        LeaveClean
+      </a>
+      <div class="navbar-actions">
+        <button class="lang-toggle" id="langToggle" aria-label="Switch language">EN</button>
+        <a href="https://github.com/3361409208a-source/LeaveClean" class="btn btn-ghost" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>
+          GitHub
+        </a>
+        <a href="https://github.com/3361409208a-source/LeaveClean/releases/download/v1.0/LeaveClean.exe" class="btn btn-primary" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          <span data-i18n="nav.download">下载</span>
+        </a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero -->
+  <section class="hero">
+    <div class="container">
+      <div class="hero-content" data-animate>
+        <div class="hero-badge">
+          <span data-i18n="hero.badge">v1.0 · 开源免费</span>
+        </div>
+        <h1 class="hero-title" data-i18n="hero.title">离职前，一键清理个人隐私数据</h1>
+        <p class="hero-subtitle" data-i18n="hero.subtitle">9大模块 · 30+ AI工具 · 零依赖 · 安全可控</p>
+        <div class="hero-actions">
+          <a href="https://github.com/3361409208a-source/LeaveClean/releases/download/v1.0/LeaveClean.exe" class="btn btn-xp-green btn-large" target="_blank" rel="noopener">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            <span data-i18n="hero.cta1">下载 EXE</span>
+          </a>
+          <a href="#features" class="btn btn-ghost btn-large">
+            <span data-i18n="hero.cta2">了解更多</span>
+          </a>
+        </div>
+        <p class="hero-trust" data-i18n="hero.trust">Python 标准库 · MIT 开源 · 无需安装依赖</p>
+      </div>
+      <div class="hero-visual" data-animate>
+        <img src="assets/demo.gif" alt="LeaveClean 演示" class="hero-screenshot" loading="eager">
+      </div>
+    </div>
+  </section>
+
+  <!-- Stats Bar -->
+  <section class="stats" data-animate>
+    <div class="container">
+      <div class="xp-titlebar">
+        <span class="xp-titlebar-text">系统信息</span>
+        <div class="xp-titlebar-buttons">
+          <button class="xp-btn-minimize">_</button>
+          <button class="xp-btn-maximize">□</button>
+          <button class="xp-btn-close">X</button>
+        </div>
+      </div>
+      <div class="stats-grid">
+        <div class="stat-item">
+          <div class="stat-number" data-count="9">0</div>
+          <div class="stat-label" data-i18n="stats.modules">清理模块</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-number" data-count="30" data-suffix="+">0</div>
+          <div class="stat-label" data-i18n="stats.tools">AI 工具</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-number" data-count="50" data-suffix="+">0</div>
+          <div class="stat-label" data-i18n="stats.apps">软件支持</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-number" data-count="0">0</div>
+          <div class="stat-label" data-i18n="stats.deps">外部依赖</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Features -->
+  <section class="section" id="features">
+    <div class="container">
+      <div class="xp-window">
+        <div class="xp-titlebar">
+          <span class="xp-titlebar-text">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
+            功能模块 - LeaveClean
+          </span>
+          <div class="xp-titlebar-buttons">
+            <button class="xp-btn-minimize">_</button>
+            <button class="xp-btn-maximize">□</button>
+            <button class="xp-btn-close">X</button>
+          </div>
+        </div>
+        <div class="xp-window-body">
+          <h2 class="section-title" data-animate data-i18n="features.title">全面覆盖，一个不漏</h2>
+          <p class="section-subtitle" data-animate data-i18n="features.subtitle">9 大清理模块，覆盖工作电脑上所有个人数据痕迹</p>
+      <div class="features-grid" data-animate-stagger>
+        <div class="feature-card">
+          <div class="feature-card-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+          </div>
+          <h3 data-i18n="features.browser.title">浏览器数据</h3>
+          <p data-i18n="features.browser.desc">Chrome、Edge、Firefox 等 6 大浏览器的账号、密码、历史、Cookie</p>
+          <span class="feature-tag" data-i18n="features.browser.tag">6 浏览器</span>
+        </div>
+        <div class="feature-card">
+          <div class="feature-card-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+          </div>
+          <h3 data-i18n="features.chat.title">聊天通讯</h3>
+          <p data-i18n="features.chat.desc">微信、QQ、企业微信、钉钉、飞书、Telegram 等聊天记录与文件</p>
+          <span class="feature-tag" data-i18n="features.chat.tag">8 通讯工具</span>
+        </div>
+        <div class="feature-card">
+          <div class="feature-card-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
+          </div>
+          <h3 data-i18n="features.files.title">个人文件</h3>
+          <p data-i18n="features.files.desc">桌面、下载、文档、图片、视频、回收站、临时文件</p>
+          <span class="feature-tag" data-i18n="features.files.tag">7 目录</span>
+        </div>
+        <div class="feature-card">
+          <div class="feature-card-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+          </div>
+          <h3 data-i18n="features.creds.title">凭证与隐私</h3>
+          <p data-i18n="features.creds.desc">Windows 凭证、WiFi 密码、剪贴板、SSH 密钥、Git 配置</p>
+          <span class="feature-tag" data-i18n="features.creds.tag">10+ 项</span>
+        </div>
+        <div class="feature-card">
+          <div class="feature-card-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+          </div>
+          <h3 data-i18n="features.ai.title">AI 编程工具</h3>
+          <p data-i18n="features.ai.desc">Claude Code、Cursor、Windsurf、Copilot、Ollama 等 30+ 工具</p>
+          <span class="feature-tag" data-i18n="features.ai.tag">30+ 工具</span>
+        </div>
+        <div class="feature-card">
+          <div class="feature-card-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="4 17 10 11 4 5"/><line x1="12" y1="19" x2="20" y2="19"/></svg>
+          </div>
+          <h3 data-i18n="features.dev.title">开发环境</h3>
+          <p data-i18n="features.dev.desc">Python、Node.js、Go、Rust、Docker、VS Code、JetBrains</p>
+          <span class="feature-tag" data-i18n="features.dev.tag">15+ 环境</span>
+        </div>
+        <div class="feature-card">
+          <div class="feature-card-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
+          </div>
+          <h3 data-i18n="features.software.title">软件管理</h3>
+          <p data-i18n="features.software.desc">50+ 个人软件的卸载、残留数据清理、注册表清理</p>
+          <span class="feature-tag" data-i18n="features.software.tag">50+ 软件</span>
+        </div>
+        <div class="feature-card">
+          <div class="feature-card-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+          </div>
+          <h3 data-i18n="features.uninstall.title">软件卸载</h3>
+          <p data-i18n="features.uninstall.desc">调用系统卸载程序，彻底移除个人安装的应用</p>
+          <span class="feature-tag" data-i18n="features.uninstall.tag">完整卸载</span>
+        </div>
+        <div class="feature-card">
+          <div class="feature-card-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+          </div>
+          <h3 data-i18n="features.self.title">自我清理</h3>
+          <p data-i18n="features.self.desc">清理完成后，工具自身也不留痕迹</p>
+          <span class="feature-tag" data-i18n="features.self.tag">无痕退出</span>
+        </div>
+      </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- AI Tools Showcase -->
+  <section class="section tools-section">
+    <div class="container">
+      <h2 class="section-title" data-animate data-i18n="tools.title">30+ AI 编程工具，一键清理</h2>
+      <p class="section-subtitle" data-animate data-i18n="tools.subtitle">从 Claude Code 到 Cursor，从 Copilot 到 Ollama，全面覆盖主流 AI 开发工具</p>
+    </div>
+    <div class="tools-marquee">
+      <div class="tools-track">
+        <span class="tool-pill">Claude Code</span>
+        <span class="tool-pill">Cursor</span>
+        <span class="tool-pill">Windsurf</span>
+        <span class="tool-pill">Trae</span>
+        <span class="tool-pill">Kiro</span>
+        <span class="tool-pill">GitHub Copilot</span>
+        <span class="tool-pill">Codeium</span>
+        <span class="tool-pill">OpenClaw</span>
+        <span class="tool-pill">Codex CLI</span>
+        <span class="tool-pill">Gemini CLI</span>
+        <span class="tool-pill">Cline</span>
+        <span class="tool-pill">Ollama</span>
+        <span class="tool-pill">Junie</span>
+        <span class="tool-pill">Augment</span>
+        <span class="tool-pill">Fitten Code</span>
+        <span class="tool-pill">Lingma</span>
+        <span class="tool-pill">CodeBuddy</span>
+        <span class="tool-pill">Devin</span>
+        <span class="tool-pill">ChatBox AI</span>
+        <span class="tool-pill">Antigravity</span>
+        <!-- Duplicate for seamless loop -->
+        <span class="tool-pill">Claude Code</span>
+        <span class="tool-pill">Cursor</span>
+        <span class="tool-pill">Windsurf</span>
+        <span class="tool-pill">Trae</span>
+        <span class="tool-pill">Kiro</span>
+        <span class="tool-pill">GitHub Copilot</span>
+        <span class="tool-pill">Codeium</span>
+        <span class="tool-pill">OpenClaw</span>
+        <span class="tool-pill">Codex CLI</span>
+        <span class="tool-pill">Gemini CLI</span>
+        <span class="tool-pill">Cline</span>
+        <span class="tool-pill">Ollama</span>
+        <span class="tool-pill">Junie</span>
+        <span class="tool-pill">Augment</span>
+        <span class="tool-pill">Fitten Code</span>
+        <span class="tool-pill">Lingma</span>
+        <span class="tool-pill">CodeBuddy</span>
+        <span class="tool-pill">Devin</span>
+        <span class="tool-pill">ChatBox AI</span>
+        <span class="tool-pill">Antigravity</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- How It Works -->
+  <section class="section">
+    <div class="container">
+      <h2 class="section-title" data-animate data-i18n="steps.title">安全四步，放心清理</h2>
+      <p class="section-subtitle" data-animate data-i18n="steps.subtitle">先扫描、再预览、双确认、后清理，每一步都在你的掌控之中</p>
+      <div class="steps-grid" data-animate-stagger>
+        <div class="step-item">
+          <div class="step-number">1</div>
+          <div class="step-content">
+            <h3 data-i18n="steps.scan.title">扫描检测</h3>
+            <p data-i18n="steps.scan.desc">并行扫描 9 大模块，秒级发现所有可清理数据</p>
+          </div>
+        </div>
+        <div class="step-item">
+          <div class="step-number">2</div>
+          <div class="step-content">
+            <h3 data-i18n="steps.preview.title">预览详情</h3>
+            <p data-i18n="steps.preview.desc">查看每项数据详情，敏感信息自动打码保护</p>
+          </div>
+        </div>
+        <div class="step-item">
+          <div class="step-number">3</div>
+          <div class="step-content">
+            <h3 data-i18n="steps.confirm.title">双重确认</h3>
+            <p data-i18n="steps.confirm.desc">勾选需要清理的项目，弹窗二次确认防止误删</p>
+          </div>
+        </div>
+        <div class="step-item">
+          <div class="step-number">4</div>
+          <div class="step-content">
+            <h3 data-i18n="steps.clean.title">执行清理</h3>
+            <p data-i18n="steps.clean.desc">并行清理，实时显示进度，操作日志完整记录</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Safety & Trust -->
+  <section class="section safety-section">
+    <div class="container">
+      <div class="xp-window">
+        <div class="xp-titlebar">
+          <span class="xp-titlebar-text">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            安全中心 - LeaveClean
+          </span>
+          <div class="xp-titlebar-buttons">
+            <button class="xp-btn-minimize">_</button>
+            <button class="xp-btn-maximize">□</button>
+            <button class="xp-btn-close">X</button>
+          </div>
+        </div>
+        <div class="xp-window-body">
+          <h2 class="section-title" data-animate data-i18n="safety.title">安全至上</h2>
+          <p class="section-subtitle" data-animate data-i18n="safety.subtitle">每一个设计决策都以数据安全为第一优先级</p>
+      <div class="safety-grid" data-animate>
+        <div class="safety-icon-large">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg>
+        </div>
+        <div class="safety-list">
+          <div class="safety-item">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+            <span data-i18n="safety.item1">只清理个人数据，不触碰系统文件</span>
+          </div>
+          <div class="safety-item">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+            <span data-i18n="safety.item2">先扫描后清理，所有操作可预览</span>
+          </div>
+          <div class="safety-item">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+            <span data-i18n="safety.item3">敏感信息自动打码显示</span>
+          </div>
+          <div class="safety-item">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+            <span data-i18n="safety.item4">操作日志完整记录，可导出审计</span>
+          </div>
+          <div class="safety-item">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+            <span data-i18n="safety.item5">双重确认弹窗，防止误操作</span>
+          </div>
+          <div class="safety-item">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+            <span data-i18n="safety.item6">开源代码，完全透明可审计</span>
+          </div>
+        </div>
+      </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Tech Highlights -->
+  <section class="section">
+    <div class="container">
+      <h2 class="section-title" data-animate data-i18n="tech.title">技术亮点</h2>
+      <div class="tech-grid" data-animate-stagger>
+        <div class="tech-card">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><line x1="3.27" y1="6.96" x2="12" y2="12.01"/><line x1="12" y1="22.08" x2="12" y2="12"/><line x1="20.73" y1="6.96" x2="12" y2="12.01"/><line x1="7" y1="3.5" x2="17" y2="8.5"/></svg>
+          <h3 data-i18n="tech.zero.title">零依赖</h3>
+          <p data-i18n="tech.zero.desc">纯 Python 标准库，无需 pip install，开箱即用</p>
+        </div>
+        <div class="tech-card">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+          <h3 data-i18n="tech.fast.title">并行扫描</h3>
+          <p data-i18n="tech.fast.desc">线程池并行扫描 9 大模块，秒级完成全盘检测</p>
+        </div>
+        <div class="tech-card">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>
+          <h3 data-i18n="tech.open.title">开源透明</h3>
+          <p data-i18n="tech.open.desc">MIT 协议，代码完全公开，欢迎审计与贡献</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="cta-section">
+    <div class="container">
+      <h2 class="section-title" data-i18n="cta.title">准备离职？先清理数据</h2>
+      <p class="section-subtitle" data-i18n="cta.subtitle">一行命令启动，无需安装任何依赖</p>
+      <div class="cta-actions">
+        <a href="https://github.com/3361409208a-source/LeaveClean/releases/download/v1.0/LeaveClean.exe" class="btn btn-white btn-large" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          <span data-i18n="cta.download">GitHub 下载</span>
+        </a>
+        <a href="https://github.com/3361409208a-source/LeaveClean" class="btn btn-outline-white btn-large" target="_blank" rel="noopener">
+          <span data-i18n="cta.source">查看源码</span>
+        </a>
+      </div>
+      <p class="cta-note" data-i18n="cta.note">Windows 10/11 · Python 3.8+</p>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <span class="footer-copy">LeaveClean · MIT License</span>
+      <div class="footer-links">
+        <a href="https://github.com/3361409208a-source/LeaveClean" target="_blank" rel="noopener">GitHub</a>
+        <a href="https://github.com/3361409208a-source/LeaveClean/issues" target="_blank" rel="noopener" data-i18n="footer.issues">问题反馈</a>
+        <a href="https://github.com/3361409208a-source/LeaveClean/blob/main/README.md" target="_blank" rel="noopener" data-i18n="footer.docs">文档</a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="js/main.js"></script>
+</body>
+</html>
