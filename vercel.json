@@ -2,6 +2,9 @@
   "outputDirectory": "landing",
   "buildCommand": "",
   "framework": null,
+  "analytics": {
+    "enable": true
+  },
   "headers": [
     {
       "source": "/(.*)",
